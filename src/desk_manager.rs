@@ -1,4 +1,5 @@
-use std::{fs::File, io};
+use std::{fs::File, io::{self, SeekFrom, Write, Read}};
+use std::io::Seek;
 
 /// 第２章ディスクマネージャーの実装
 ///
@@ -27,6 +28,7 @@ pub struct DeskManager {
 #[derive(PartialEq)]
 #[derive(Debug)]
 pub struct PageId(pub u64);
+// new type pattern というらしい
 
 const PAGE_SIZE: usize = 4096;
 
@@ -44,6 +46,24 @@ impl DeskManager {
         let page_id = self.next_page_id;
         self.next_page_id += 1;
         PageId(page_id)
+    }
+
+    pub fn write_page_data(&mut self, page_id: PageId, data: &[u8]) -> io::Result<()> {
+        // このタイプのストラクとは、taple っぽく値が取得できるみたい
+        let offset = PAGE_SIZE as u64 * page_id.0;
+
+        // file の先頭から数えて offset バイト目へ
+        self.heap_file.seek(SeekFrom::Start(offset))?;
+
+        self.heap_file.write_all(data)
+    }
+
+    pub fn read_page_data(&mut self, page_id: PageId, data: &mut [u8]) ->io::Result<()> {
+        let offset = PAGE_SIZE as u64 * page_id.0;
+        self.heap_file.seek(SeekFrom::Start(offset))?;
+
+        // 読みだしたデータをそのまま帰すのではなく、data に書き込む
+        self.heap_file.read_exact(data)
     }
 }
 
