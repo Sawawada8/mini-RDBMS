@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "mini-RDBMS"
+name = "mini-rdbms"
 version = "0.1.0"
