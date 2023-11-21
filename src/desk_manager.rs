@@ -24,9 +24,66 @@ pub struct DeskManager {
     heap_file: File,
     next_page_id: u64,
 }
+#[derive(PartialEq)]
+#[derive(Debug)]
+pub struct PageId(pub u64);
+
+const PAGE_SIZE: usize = 4096;
 
 impl DeskManager {
-    // pub fn new(data_file: File) -> io::Result<Self> {
-    //     DeskManager {}
-    // }
+    pub fn new(heap_file: File) -> io::Result<Self> {
+        let heap_file_size = heap_file.metadata()?.len();
+        let next_page_id = heap_file_size / PAGE_SIZE as u64;
+        Ok( Self {
+            heap_file,
+            next_page_id,
+        })
+    }
+
+    pub fn allocate_page(&mut self) -> PageId {
+        let page_id = self.next_page_id;
+        self.next_page_id += 1;
+        PageId(page_id)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    mod helper {
+        use super::*;
+
+        pub fn init() -> io::Result<DeskManager> {
+            let heap_file = File::create("foo.txt")?;
+            let dm = DeskManager::new(heap_file)?;
+            Ok(dm)
+        }
+    }
+
+    #[test]
+    fn new() -> io::Result<()> {
+        let dm = helper::init()?;
+
+        assert_eq!(0, dm.next_page_id);
+        Ok(())
+    }
+
+    #[test]
+    // allocate_page で PageId を返すこと、
+    // next_page_id が increment されること
+    fn allocate_page() -> io::Result<()> {
+        let mut dm = helper::init()?;
+
+        assert_eq!(0, dm.next_page_id);
+        let next_page_id = dm.allocate_page();
+        assert_eq!(PageId(0), next_page_id);
+        assert_eq!(1, dm.next_page_id);
+
+        let next_page_id = dm.allocate_page();
+        assert_eq!(PageId(1), next_page_id);
+        assert_eq!(2, dm.next_page_id);
+
+        Ok(())
+    }
 }
