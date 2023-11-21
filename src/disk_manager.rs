@@ -21,7 +21,7 @@ use std::io::Seek;
 /// ヒープファイルからページの書き込み、読み取り
 
 #[derive(Debug)]
-pub struct DeskManager {
+pub struct DiskManager {
     heap_file: File,
     next_page_id: u64,
 }
@@ -32,7 +32,7 @@ pub struct PageId(pub u64);
 
 const PAGE_SIZE: usize = 4096;
 
-impl DeskManager {
+impl DiskManager {
     pub fn new(heap_file: File) -> io::Result<Self> {
         let heap_file_size = heap_file.metadata()?.len();
         let next_page_id = heap_file_size / PAGE_SIZE as u64;
@@ -74,9 +74,9 @@ mod tests {
     mod helper {
         use super::*;
 
-        pub fn init() -> io::Result<DeskManager> {
+        pub fn init() -> io::Result<DiskManager> {
             let heap_file = File::create("foo.txt")?;
-            let dm = DeskManager::new(heap_file)?;
+            let dm = DiskManager::new(heap_file)?;
             Ok(dm)
         }
     }
