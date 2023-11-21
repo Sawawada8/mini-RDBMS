@@ -1,3 +1,8 @@
+mod desk_manager;
+
+use desk_manager::DeskManager;
+
 fn main() {
-    println!("Hello, world!");
+    let dm = DeskManager {};
+    println!("{:?}", dm);
 }
