@@ -52,6 +52,8 @@ impl DiskManager {
         // このタイプのストラクとは、taple っぽく値が取得できるみたい
         let offset = PAGE_SIZE as u64 * page_id.0;
 
+        println!("{:?}", &data[..]);
+
         // file の先頭から数えて offset バイト目へ
         self.heap_file.seek(SeekFrom::Start(offset))?;
 
