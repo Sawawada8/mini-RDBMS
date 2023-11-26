@@ -6,5 +6,5 @@ RDBMS 自作
 をやってみる
 
 ## todo
-- [ ] desk manager
+- [ ] disk manager
 - [ ]
