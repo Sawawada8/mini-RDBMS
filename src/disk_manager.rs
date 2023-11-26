@@ -1,5 +1,9 @@
-use std::{fs::{File, OpenOptions}, io::{self, SeekFrom, Write, Read}, path::Path};
 use std::io::Seek;
+use std::{
+    fs::{File, OpenOptions},
+    io::{self, Read, SeekFrom, Write},
+    path::Path,
+};
 
 /// 第２章ディスクマネージャーの実装
 ///
@@ -25,8 +29,7 @@ pub struct DiskManager {
     heap_file: File,
     next_page_id: u64,
 }
-#[derive(PartialEq)]
-#[derive(Debug, Clone, Copy)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub struct PageId(pub u64);
 // new type pattern というらしい
 
@@ -36,7 +39,7 @@ impl DiskManager {
     pub fn new(heap_file: File) -> io::Result<Self> {
         let heap_file_size = heap_file.metadata()?.len();
         let next_page_id = heap_file_size / PAGE_SIZE as u64;
-        Ok( Self {
+        Ok(Self {
             heap_file,
             next_page_id,
         })
@@ -69,7 +72,7 @@ impl DiskManager {
         self.heap_file.write_all(data)
     }
 
-    pub fn read_page_data(&mut self, page_id: PageId, data: &mut [u8]) ->io::Result<()> {
+    pub fn read_page_data(&mut self, page_id: PageId, data: &mut [u8]) -> io::Result<()> {
         let offset = PAGE_SIZE as u64 * page_id.0;
         self.heap_file.seek(SeekFrom::Start(offset))?;
 
