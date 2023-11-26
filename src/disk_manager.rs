@@ -33,7 +33,7 @@ pub struct DiskManager {
 pub struct PageId(pub u64);
 // new type pattern というらしい
 
-const PAGE_SIZE: usize = 4096;
+pub const PAGE_SIZE: usize = 4096;
 
 impl DiskManager {
     pub fn new(heap_file: File) -> io::Result<Self> {
@@ -63,8 +63,6 @@ impl DiskManager {
     pub fn write_page_data(&mut self, page_id: PageId, data: &[u8]) -> io::Result<()> {
         // このタイプのストラクとは、taple っぽく値が取得できるみたい
         let offset = PAGE_SIZE as u64 * page_id.0;
-
-        println!("{:?}", &data[..]);
 
         // file の先頭から数えて offset バイト目へ
         self.heap_file.seek(SeekFrom::Start(offset))?;
